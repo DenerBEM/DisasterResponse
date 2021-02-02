@@ -75,23 +75,8 @@ def clean_data(df):
     # Dropping unnecessaries columns
     df.drop(columns=['genre', 'child_alone'], inplace=True)
 
-    def changeNumber(x):
-    '''
-    This is a simple function that simply checks if the number is equals 2, if so, 
-    it assigns a value of 1 for it.
-    
-    INPUT:
-    x = A single integer number
-    
-    OUTPUT:
-    Return the new value of x
-    
-    '''
-      if x == 2:
-        x=1
-      return x
     # Transforming values equals number 2, to number 1
-    df.related = df.related.apply(lambda x: changeNumber(x))
+    df.loc[df.related == 2, 'related'] = 1
 
     return df
 
@@ -106,9 +91,9 @@ def save_data(df, database_filename):
     No outputs
   '''
     # Saving the dataframe
-    db = database_filename
-    engine = create_engine(f'sqlite:///{db}.db')
-    df.to_sql('DisasterResponse', engine, index=False, if_exists='replace')
+  db = database_filename
+  engine = create_engine(f'sqlite:///{db}.db')
+  df.to_sql('DisasterResponse', engine, index=False, if_exists='replace')
   
 
 def main():
@@ -116,24 +101,24 @@ def main():
   Description: This function executes all the other functions
         in this script.
   '''
-    if len(sys.argv) == 4:
+if len(sys.argv) == 4:
 
-        messages_filepath, categories_filepath, database_filepath = sys.argv[1:]
+  messages_filepath, categories_filepath, database_filepath = sys.argv[1:]
 
-        print('Loading data...\n    MESSAGES: {}\n    CATEGORIES: {}'
+  print('Loading data...\n    MESSAGES: {}\n    CATEGORIES: {}'
               .format(messages_filepath, categories_filepath))
-        df = load_data(messages_filepath, categories_filepath)
+  df = load_data(messages_filepath, categories_filepath)
 
-        print('Cleaning data...')
-        df = clean_data(df)
+  print('Cleaning data...')
+  df = clean_data(df)
         
-        print('Saving data...\n    DATABASE: {}'.format(database_filepath))
-        save_data(df, database_filepath)
+  print('Saving data...\n    DATABASE: {}'.format(database_filepath))
+  save_data(df, database_filepath)
         
-        print('Cleaned data saved to database!')
+  print('Cleaned data saved to database!')
     
-    else:
-        print('Please provide the filepaths of the messages and categories '\
+else:
+  print('Please provide the filepaths of the messages and categories '\
               'datasets as the first and second argument respectively, as '\
               'well as the filepath of the database to save the cleaned data '\
               'to as the third argument. \n\nExample: python process_data.py '\
